@@ -6,7 +6,7 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const { autenticarToken, autorizarCargo } = require('./auth');
+const { autenticarToken, autorizarCargo } = require('./middleware/auth');
 
 const app = express();
 app.set('trust proxy', 1);
