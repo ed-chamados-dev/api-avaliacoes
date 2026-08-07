@@ -6,7 +6,19 @@ module.exports = (pool) => {
 
   router.get('/avaliacoes-detalhadas', autenticarToken, autorizarCargo('admin','gerente'), async (req,res)=>{
     let query = `
-      SELECT l.nome, a.nota_atendimento, a.nota_organizacao, a.nota_produtos, a.comentario, a.data_avaliacao
+      SELECT 
+        l.nome, 
+        a.nota_atendimento, 
+        a.nota_organizacao, 
+        a.nota_produtos, 
+        a.comentario, 
+        a.data_avaliacao,
+        a.tipo_comentario,
+        a.encontrou_produto,
+        a.produto_desejado,
+        a.deseja_contato,
+        a.nome_contato,
+        a.telefone_contato
       FROM avaliacoes a
       JOIN lojas l ON l.id=a.loja_id
     `;
