@@ -18,7 +18,9 @@ module.exports = (pool) => {
         a.produto_desejado,
         a.deseja_contato,
         a.nome_contato,
-        a.telefone_contato
+        a.telefone_contato,
+        a.comentar_colaborador,
+        a.nome_colaborador
       FROM avaliacoes a
       JOIN lojas l ON l.id=a.loja_id
     `;
