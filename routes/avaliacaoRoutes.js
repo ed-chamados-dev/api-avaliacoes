@@ -7,6 +7,7 @@ module.exports = (pool) => {
   router.get('/avaliacoes-detalhadas', autenticarToken, autorizarCargo('admin','gerente'), async (req,res)=>{
     let query = `
       SELECT 
+        a.loja_id,
         l.nome, 
         a.nota_atendimento, 
         a.nota_organizacao, 
