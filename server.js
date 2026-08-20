@@ -179,9 +179,12 @@ app.post('/avaliacoes', async (req, res) => {
         `
     };
 
-    transporter.sendMail(mailOptions)
-        .then(info => console.log("✅ E-mail enviado com sucesso! ID:", info.messageId))
-        .catch(err => console.error("❌ Erro no Gmail:", err));
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log("✅ E-mail enviado com sucesso! ID:", info.messageId);
+    } catch (emailErr) {
+        console.error("❌ Erro no Gmail:", emailErr);
+    }
     // 🔥 FIM DO DISPARO DE E-MAIL
 
     res.json({ success: true });
