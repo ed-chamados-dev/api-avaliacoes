@@ -130,7 +130,7 @@ app.get('/lojas/token/:token', async (req, res) => {
 });
 
 app.post('/avaliacoes', async (req, res) => {
-  console.log("🔔 ALARME: Alguém tentou enviar uma avaliação! Dados recebidos:", req.body); // 🔥 ADICIONE ESTA LINHA
+  console.log("🔔 ALARME: Alguém tentou enviar uma avaliação! Dados:", req.body);
 
   const {
     loja_id, nota_atendimento, nota_organizacao, nota_produtos,
@@ -149,9 +149,11 @@ app.post('/avaliacoes', async (req, res) => {
   }
 
   try {
+    console.log("⏳ Rastreador 1: Verificando loja no banco de dados...");
     const [lojaExiste] = await pool.query("SELECT id FROM lojas WHERE id = ?", [loja_id]);
     if (lojaExiste.length === 0) return res.status(400).json({ error: "Loja inválida." });
 
+    console.log("⏳ Rastreador 2: Salvando avaliação no banco...");
     await pool.query(
       `INSERT INTO avaliacoes
       (loja_id, nota_atendimento, nota_organizacao, nota_produtos, encontrou_produto, produto_desejado, deseja_contato, nome_contato, telefone_contato, comentar_colaborador, nome_colaborador, tipo_comentario, comentario)
@@ -159,10 +161,10 @@ app.post('/avaliacoes', async (req, res) => {
       [loja_id, atendimento, organizacao, produtos, encontrou_produto, produto_desejado, deseja_contato, nome_contato, telefone_contato, comentar_colaborador, nome_colaborador, tipo_comentario, comentario]
     );
 
-    // 🔥 INÍCIO DO DISPARO DE E-MAIL 👇
+    console.log("⏳ Rastreador 3: Avaliação salva! Montando e-mail...");
     const mailOptions = {
-        from: '"A Casa Brasileira" <chamados@acasabrasileira.com.br>', // O mesmo Gmail configurado lá em cima
-        to: "chamados@acasabrasileira.com.br", // O e-mail que vai RECEBER os alertas (pode ser o mesmo ou outro)
+        from: '"A Casa Brasileira" <chamados@acasabrasileira.com.br>',
+        to: "chamados@acasabrasileira.com.br", // <-- Mude se quiser que apite em outro celular/email
         subject: `🚨 Nova Avaliação Recebida!`,
         html: `
             <div style="font-family: Arial, sans-serif; padding: 20px; border-left: 5px solid #05c178; background: #f9f9f9;">
@@ -179,20 +181,18 @@ app.post('/avaliacoes', async (req, res) => {
         `
     };
 
-    try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log("✅ E-mail enviado com sucesso! ID:", info.messageId);
-    } catch (emailErr) {
-        console.error("❌ Erro no Gmail:", emailErr);
-    }
-    // 🔥 FIM DO DISPARO DE E-MAIL
+    console.log("⏳ Rastreador 4: Disparando para o Google Workspace...");
+    const info = await transporter.sendMail(mailOptions);
+    console.log("✅ E-mail enviado com sucesso! ID:", info.messageId);
 
+    console.log("⏳ Rastreador 5: Respondendo sucesso para o site!");
     res.json({ success: true });
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erro ao salvar avaliação' });
+    console.error("❌ ERRO GRAVE DETECTADO:", err);
+    res.status(500).json({ error: 'Erro ao processar a requisição' });
   }
-  });
+});
 
 // ===============================
 // ROTAS DE USUÁRIOS ADMIN
