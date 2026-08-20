@@ -161,8 +161,8 @@ app.post('/avaliacoes', async (req, res) => {
 
     // 🔥 INÍCIO DO DISPARO DE E-MAIL 👇
     const mailOptions = {
-        from: '"A Casa Brasileira" <seu-email-da-loja@gmail.com>', // O mesmo Gmail configurado lá em cima
-        to: "gerencia@seu-email-geral.com", // O e-mail que vai RECEBER os alertas (pode ser o mesmo ou outro)
+        from: '"A Casa Brasileira" <chamados@acasabrasileira.com.br>', // O mesmo Gmail configurado lá em cima
+        to: "chamados@acasabrasileira.com.br", // O e-mail que vai RECEBER os alertas (pode ser o mesmo ou outro)
         subject: `🚨 Nova Avaliação Recebida!`,
         html: `
             <div style="font-family: Arial, sans-serif; padding: 20px; border-left: 5px solid #05c178; background: #f9f9f9;">
