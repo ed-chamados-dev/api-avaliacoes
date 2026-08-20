@@ -5,8 +5,20 @@ const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const helmet = require('helmet');
+
 const rateLimit = require('express-rate-limit');
 const { autenticarToken, autorizarCargo } = require('./middleware/auth');
+
+// 🔥 ADICIONE ESTAS LINHAS AQUI 👇
+const nodemailer = require('nodemailer');
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: "seu-email-da-loja@gmail.com", // Substitua pelo seu Gmail
+        pass: "sua-senha-de-app-aqui"        // Senha de 16 letras gerada no Google
+    }
+});
+// 🔥 FIM DA CONFIGURAÇÃO DO E-MAIL 
 
 const app = express();
 app.set('trust proxy', 1);
@@ -144,12 +156,36 @@ app.post('/avaliacoes', async (req, res) => {
       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       [loja_id, atendimento, organizacao, produtos, encontrou_produto, produto_desejado, deseja_contato, nome_contato, telefone_contato, comentar_colaborador, nome_colaborador, tipo_comentario, comentario]
     );
+
+    // 🔥 INÍCIO DO DISPARO DE E-MAIL 👇
+    const mailOptions = {
+        from: '"A Casa Brasileira" <seu-email-da-loja@gmail.com>', // O mesmo Gmail configurado lá em cima
+        to: "gerencia@seu-email-geral.com", // O e-mail que vai RECEBER os alertas (pode ser o mesmo ou outro)
+        subject: `🚨 Nova Avaliação Recebida!`,
+        html: `
+            <div style="font-family: Arial, sans-serif; padding: 20px; border-left: 5px solid #05c178; background: #f9f9f9;">
+                <h2 style="color: #05c178;">Temos uma nova avaliação!</h2>
+                <p><strong>Notas:</strong> Atendimento (${atendimento}) | Organização (${organizacao}) | Produtos (${produtos})</p>
+                <p><strong>Comentário:</strong> ${comentario || 'Nenhum comentário.'}</p>
+                <p><strong>Produto desejado:</strong> ${produto_desejado || 'N/A'}</p>
+                <p><strong>Colaborador citado:</strong> ${nome_colaborador || 'N/A'}</p>
+                <hr style="border: 1px solid #ddd;">
+                <p><strong>Deseja contato?</strong> ${deseja_contato}</p>
+                <p><strong>Nome:</strong> ${nome_contato || '-'}</p>
+                <p><strong>Telefone:</strong> ${telefone_contato || '-'}</p>
+            </div>
+        `
+    };
+
+    transporter.sendMail(mailOptions).catch(err => console.error("Erro ao enviar e-mail:", err));
+    // 🔥 FIM DO DISPARO DE E-MAIL
+
     res.json({ success: true });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erro ao salvar avaliação' });
   }
-});
+  });
 
 // ===============================
 // ROTAS DE USUÁRIOS ADMIN
