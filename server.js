@@ -130,6 +130,8 @@ app.get('/lojas/token/:token', async (req, res) => {
 });
 
 app.post('/avaliacoes', async (req, res) => {
+  console.log("🔔 ALARME: Alguém tentou enviar uma avaliação! Dados recebidos:", req.body); // 🔥 ADICIONE ESTA LINHA
+
   const {
     loja_id, nota_atendimento, nota_organizacao, nota_produtos,
     encontrou_produto, produto_desejado, deseja_contato, nome_contato,
