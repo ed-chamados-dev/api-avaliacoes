@@ -14,8 +14,8 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: "seu-email-da-loja@gmail.com", // Substitua pelo seu Gmail
-        pass: "sua-senha-de-app-aqui"        // Senha de 16 letras gerada no Google
+        user: "chamados@acasabrasileira.com.br", // Substitua pelo seu Gmail
+        pass: "xrxkjobmrpormdua"        // Senha de 16 letras gerada no Google
     }
 });
 // 🔥 FIM DA CONFIGURAÇÃO DO E-MAIL 
