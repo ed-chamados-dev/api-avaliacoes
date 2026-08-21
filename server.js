@@ -12,13 +12,16 @@ const { autenticarToken, autorizarCargo } = require('./middleware/auth');
 // 🔥 ADICIONE ESTAS LINHAS AQUI 👇
 const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com', // Apontamos diretamente para o servidor
+    port: 587,              // Forçamos a porta liberada pelo Render
+    secure: false,          // Falso para a porta 587
+    requireTLS: true,       // Ativa a criptografia de segurança do Google
     auth: {
-        user: "chamados@acasabrasileira.com.br", // Substitua pelo seu Gmail
-        pass: "xrxkjobmrpormdua"        // Senha de 16 letras gerada no Google
+        user: "chamados@acasabrasileira.com.br", 
+        pass: "xrxkjobmrpormdua"        
     }
 });
-// 🔥 FIM DA CONFIGURAÇÃO DO E-MAIL 
+// 🔥 FIM DA CONFIGURAÇÃO DO E-MAIL
 
 const app = express();
 app.set('trust proxy', 1);
